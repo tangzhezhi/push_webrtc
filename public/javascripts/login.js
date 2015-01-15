@@ -1,5 +1,35 @@
 $(document).ready(function(){
-    $(".form-signin").submit(function(){
+
+    /**
+     * ajax请求，服务端无法跳转
+     * @param username
+     * @param password
+     */
+    function login(username,password){
+        $.ajax({
+            type: "POST",
+            url: "login",
+            data: {"username":username,"password":password},
+            success: function(data){
+                if(data){
+                    if(data.msg){
+                        alert(data.msg);
+                    }
+                    if(data.success){
+                        window.location="/index";
+                    }
+                }
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+        });
+    }
+
+
+
+
+    $(".form-signin").click(function(){
         var flag = false;
         $("div.form-group").removeClass("has-error");
         $("span.help-block").text("");
@@ -15,15 +45,7 @@ $(document).ready(function(){
         }
 
         if($.trim($("#username").val()) != "" && $.trim($("#password").val()) != "") {
-            $("div.alert").remove();
-            var alertdiv = $("<div>");
-            alertdiv.addClass("alert alert-danger");
-            var btn = $("<button>");
-            btn.addClass("close").attr("data-dismiss","alert").html("×");
-            var msg = $("<span>");
-            msg.html("<h4>警告!</h4>用戶名或密碼錯誤.");
-            alertdiv.append(btn).append(msg);
-            $("h2.form-signin-heading").after(alertdiv);
+            login($("#username").val(),$("#password").val());
         }
 
     });

@@ -29,6 +29,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 
+//设置跨域访问
+//app.all('*', function(req, res, next) {
+//    res.header("Access-Control-Allow-Origin", "*");
+//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//    res.header("Access-Control-Allow-Methods","POST,GET");
+//    res.header("X-Powered-By",' 3.2.1')
+//    next();
+//});
+
+
 //app.use(session({
 //    secret: settings.cookieSecret,
 //    store: new MongoStore({

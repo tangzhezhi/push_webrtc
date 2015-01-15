@@ -17,16 +17,17 @@ var login = function(router){
             UserDao.get(params,function(err,user){
                 if(err){
                     console.error("查询用户错误"+err);
+                    res.json(200, { msg: "查询用户错误" })
                 }
                 else{
                     if(user){
                         console.log("查询得到user::"+user);
                         req.session.user = user;
-                        res.redirect("/index");
+                        res.json(200, { success: 'success' })
                     }
                     else{
                         console.log("查询不到user::");
-                        return res.redirect('/login');
+                        res.json(200, { msg: '用户名或者密码错误' })
                     }
                 }
             });
