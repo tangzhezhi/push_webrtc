@@ -23,11 +23,11 @@ var login = function(router){
                     if(user){
                         console.log("查询得到user::"+user);
                         req.session.user = user;
-                        res.json(200, { success: 'success' })
+                        res.json(200, "success")
                     }
                     else{
                         console.log("查询不到user::");
-                        res.json(200, { msg: '用户名或者密码错误' })
+                        res.json(200, "不存在此用户")
                     }
                 }
             });

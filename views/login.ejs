@@ -1,24 +1,75 @@
-<% include header.ejs %>
-<link href="/stylesheets/login.css" rel="stylesheet">
-<div class="container">
-	<form class="form-signin" role="form">
-		<h2 class="form-signin-heading center">登录</h2>
-		<div class="form-group">
-			<div>
-				<input type="text" name="username" id="username" class="form-control" autofocus placeholder="请输入用戶名" value="">
-				<span class="help-block"></span>
-			</div>
-		</div>
-		<div class="form-group">
-			<div>
-				<input type="password" name="password" id="password" class="form-control " placeholder="请输入密码" value="">
-				<span class="help-block"></span>
-			</div>
-		</div>
-		<div class="form-group">
-			<input type="button" class="btn btn-primary btn-lg btn-block" value="登录">
-		</div>
-	</form>
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>登陆页</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+	<link rel="stylesheet" href="assets/css/amazeui.css"/>
+	<style>
+		.header {
+			text-align: center;
+		}
+		.header h1 {
+			font-size: 200%;
+			color: #333;
+			margin-top: 30px;
+		}
+		.header p {
+			font-size: 14px;
+		}
+	</style>
+</head>
+<body>
+<div class="header">
+	<div class="am-g">
+		<h1>Web ide</h1>
+	</div>
+	<hr />
 </div>
-<% include footer.ejs %>
+<div class="am-g">
+	<div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+
+		<form id="myForm" class="am-form">
+			<fieldset>
+				<div class="am-form-group">
+					<label for="email">邮箱:</label>
+					<input type="email" name="" id="email" value="" minlength="3" placeholder="输入用户名" class="am-form-field" required  />
+				</div>
+				<div class="am-form-group">
+					<label for="password">密码:</label>
+					<input type="password" name="" id="password" value="">
+				</div>
+				<div class="am-cf">
+					<div class="am-g">
+						<div class="am-u-md-6">
+							<input id="login" type="button" name="" value="登 录" class="am-btn am-btn-primary am-btn-sm am-fl am-btn-block">
+						</div>
+						<div class="am-u-md-6">
+							<input type="button" name="" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr am-btn-block">
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+
+		<div class="am-modal am-modal-no-btn" tabindex="-1" id="my-modal">
+			<div class="am-modal-dialog">
+				<div class="am-modal-hd">
+					<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+				</div>
+				<div class="am-modal-bd"></div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/amazeui.js"></script>
 <script src="/javascripts/login.js"></script>

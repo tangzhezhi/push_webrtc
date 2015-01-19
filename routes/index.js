@@ -6,6 +6,7 @@ var router = express.Router();
  */
 var login = require("../routes/login")(router);
 var User = require('../models/user');
+var MenuDao =  require('../models/menu');
 
 /**
  * 获取redis 客户端
@@ -82,6 +83,30 @@ router.get('/index',function(req,res){
     if(req.session.user){
         res.render("index",{title:'欢迎来到首页'});
     }
+  }
+});
+
+
+router.post('/getMenu',function(req,res){
+  var params = req.body;
+  if(params){
+    var username = params.username;
+    MenuDao.getAllMenu(function(err,menus){
+      if(err){
+        console.error("查询菜单错误"+err);
+        res.json(200, { msg: "查询菜单错误" })
+      }
+      else{
+        if(menus){
+          console.log("查询得到菜单::"+menus);
+          res.json(200, {"msg":"success",data:menus})
+        }
+        else{
+          console.log("查询不到菜单::");
+          res.json(200, "不存在此菜单")
+        }
+      }
+    });
   }
 });
 

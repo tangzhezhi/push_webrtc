@@ -1,52 +1,44 @@
 $(document).ready(function(){
 
-    /**
-     * ajax请求，服务端无法跳转
-     * @param username
-     * @param password
-     */
-    function login(username,password){
-        $.ajax({
-            type: "POST",
-            url: "login",
-            data: {"username":username,"password":password},
-            success: function(data){
-                if(data){
-                    if(data.msg){
-                        alert(data.msg);
+    var validFlag = false;
+
+    $("#login").click(function(){
+        var username=$("#email").val();
+        var password=$("#password").val();
+        if(validFlag){
+            $.ajax({
+                type:"post",
+                url: "login",
+                data:{username:username,password:password},
+                cache: false,
+                success: function(data){
+                    if(data === "success"){
+                        window.location = "index";
                     }
-                    if(data.success){
-                        window.location="/index";
+                    else{
+                       $('#my-modal').modal('toggle');
+                        $(".am-modal-bd").text(data);
                     }
+                },
+                error:function(data, textStatus, jqXHR){
+                    alert(data);
                 }
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown){
-                alert(errorThrown);
-            }
-        });
-    }
-
-
-
-
-    $(".form-signin").click(function(){
-        var flag = false;
-        $("div.form-group").removeClass("has-error");
-        $("span.help-block").text("");
-        if($.trim($("#username").val())==""){
-            $("#username").parent().parent().addClass("has-error");
-            $("#username").val("");
-            $("#username").next().text("请输入用戶名.");
+            });
         }
-        if($.trim($("#password").val())==""){
-            $("#password").parent().parent().addClass("has-error");
-            $("#password").val("");
-            $("#password").next().text("请输入密码.");
-        }
-
-        if($.trim($("#username").val()) != "" && $.trim($("#password").val()) != "") {
-            login($("#username").val(),$("#password").val());
-        }
-
     });
+
+    $('#myForm').validator({
+        validate: function(validity) {
+            if(!validity.valid){
+                $("#error").remove();
+                $("#"+validity.field.id).parent().append('<div id="error">'+validity.field.validationMessage+'</div>');
+                validFlag = false;
+            }
+            else{
+                $("#error").remove();
+                validFlag = true;
+            }
+        }
+    });
+
 });
