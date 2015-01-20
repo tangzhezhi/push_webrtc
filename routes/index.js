@@ -8,6 +8,7 @@ var login = require("../routes/login")(router);
 var chat = require("../routes/chat")(router);
 var User = require('../models/user');
 var MenuDao =  require('../models/menu');
+var ChatRoomDao =  require('../models/chatRoom');
 
 /**
  * 获取redis 客户端
@@ -110,6 +111,30 @@ router.post('/getMenu',function(req,res){
     });
   }
 });
+
+router.post('/getRoomInfo',function(req,res){
+  var params = req.body;
+  if(params){
+    var username = params.username;
+    ChatRoomDao.getAllChatRoom(function(err,chat_room){
+      if(err){
+        console.error("查询聊天室错误"+err);
+        res.json(200, { msg: "查询聊天室错误" })
+      }
+      else{
+        if(chat_room){
+          console.log("查询得到聊天室::"+chat_room);
+          res.json(200, {"msg":"success",data:chat_room})
+        }
+        else{
+          console.log("查询不到聊天室::");
+          res.json(200, "不存在此聊天室")
+        }
+      }
+    });
+  }
+});
+
 
 
 

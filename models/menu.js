@@ -19,11 +19,11 @@ Menu.save = function save(callback) {
 		}
 		db.collection('menus', function(err, collection) {
 			if (err) {
-				mongodb.close();
+				db.close();
 				return callback(err);
 			}
 			collection.insert(menu, {safe: true}, function(err, menu) {
-				mongodb.close();
+				db.close();
 				callback(err, menu);
 			});
 		});
@@ -43,12 +43,12 @@ Menu.get = function get(menu, callback) {
 
 		db.collection('menus', function(err, collection) {
 			if (err) {
-				mongodb.close();
+				db.close();
 				return callback(err);
 			}
 
 			collection.findOne({name: menu.name}, function(err, doc) {
-				mongodb.close();
+				db.close();
 				if (doc) {
 					var user = new Menu(doc);
 					callback(err, user);
@@ -70,13 +70,13 @@ Menu.getAllMenu = function getAll(callback) {
 
 		db.collection('menus', function(err, collection) {
 			if (err) {
-				mongodb.close();
+				db.close();
 				return callback(err);
 			}
 			var query = {};
 
 			collection.find(query).sort({id: 1}).toArray(function(err, docs) {
-				mongodb.close();
+				db.close();
 				if (err) {
 					callback(err, null);
 				}
