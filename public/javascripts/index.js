@@ -18,15 +18,15 @@ $(document).ready(function(){
                             else{
 
                                 menus = menus + "<li class='admin-parent'>" +
-                                "<a class='am-cf' data-am-collapse='{target: #"+value.id+"}'><span class='am-icon-file'></span> "+value.name+"<span class='am-icon-angle-right am-fr am-margin-right'></span></a>" ;
+                                "<a class='am-cf' data-am-collapse={target:'#"+value.id+"'}><span class='am-icon-file'></span> "+value.name+"<span class='am-icon-angle-right am-fr am-margin-right'></span></a>" +
+                                    "<ul class='am-list am-collapse admin-sidebar-sub am-in' id="+value.id+">" ;
 
                                 $.each(value.children,function(index_child,value_child){
                                     menus = menus +
-                                    "<ul class='am-list am-collapse admin-sidebar-sub am-in' id="+value_child.id+">" +
                                     "<li><a href='"+value_child.url+"' class='am-cf'><span class='am-icon-check'></span> "+value_child.name+"<span class='am-icon-star am-fr am-margin-right admin-icon-yellow'></span></a></li>";
                                 });
 
-                                menus = menus + "</li>" ;
+                                menus = menus + "</ul></li>" ;
                             }
                         }
                     });

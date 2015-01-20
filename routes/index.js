@@ -5,6 +5,7 @@ var router = express.Router();
  * @type {*|exports}
  */
 var login = require("../routes/login")(router);
+var chat = require("../routes/chat")(router);
 var User = require('../models/user');
 var MenuDao =  require('../models/menu');
 
