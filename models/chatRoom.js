@@ -9,35 +9,56 @@ function ChatRoom(char_room) {
 
 
 ChatRoom.getAllChatRoom = function getAll(callback) {
-	mongodb.open(function(err, db) {
-		if (err) {
-			return callback(err);
-		}
-
-		mongodb.Db;
-
-		db.collection('chat_rooms', function(err, collection) {
+	if(!mongodb.openCalled){
+		mongodb.open(function(err, db) {
 			if (err) {
-				db.close();
+				return callback(err);
+			}
+			db.collection('chat_rooms', function(err, collection) {
+				if (err) {
+					return callback(err);
+				}
+				var query = {};
+
+				collection.find(query).sort({id: 1}).toArray(function(err, docs) {
+					if (err) {
+						callback(err, null);
+					}
+
+					var ChatRooms = [];
+					docs.forEach(function(doc, index) {
+						ChatRooms.push(doc);
+					});
+					callback(null, ChatRooms);
+				});
+			});
+		});
+	}
+	else{
+		mongodb.collection('chat_rooms', function(err, collection) {
+			if (err) {
 				return callback(err);
 			}
 			var query = {};
 
-			collection.find(query).sort({id: 1}).toArray(function(err, docs) {
-				db.close();
+			collection.find(query).toArray(function(err, docs) {
 				if (err) {
-					db.close();
 					callback(err, null);
 				}
 
 				var ChatRooms = [];
-				docs.forEach(function(doc, index) {
-					ChatRooms = doc.chat_rooms;
-				});
+
+				if(docs){
+					docs.forEach(function(doc, index) {
+						ChatRooms.push(doc);
+					});
+				}
 				callback(null, ChatRooms);
 			});
 		});
-	});
+	}
+
+
 };
 
 module.exports = ChatRoom;

@@ -3,15 +3,12 @@ $(document).ready(function(){
     /**
      * 获取菜单
      */
-    function getMenu(callback){
+    function getMenu(){
         $.ajax({
             type:"post",
             url: "getMenu",
             cache: false,
             success: function(data){
-
-                callback();
-
                 if(data.msg === "success"){
                     console.log(data.data);
 
@@ -59,6 +56,7 @@ $(document).ready(function(){
             cache: false,
             success: function(data){
                 if(data.msg === "success"){
+
                     console.log(data.data);
 
                     var chat_room_str = " <table class='am-table am-table-bd am-table-striped admin-content-table'>"+
@@ -98,7 +96,78 @@ $(document).ready(function(){
         });
     };
 
-    getMenu(getRoomInfo);
+    function getAllFriends(){
+        $.ajax({
+            type:"post",
+            url: "getAllFriends",
+            cache: false,
+            success: function(data){
+                if(data.msg === "success"){
+                    console.log(data.data);
+
+                    var friend_str = " <div class='am-cf'>"+
+                        "<section data-am-widget='accordion' class='am-accordion am-accordion-basic am-no-layout' data-am-accordion='{  }'>" +
+                            "<dl class='am-accordion-item'> "
+
+                    $.each(data.data.groups, function(index, value) {
+                        friend_str = friend_str + "<dt id="+value.groupid+" class='am-cf am-accordion-title'>"+value.groupname+"</dt>"+
+                            "<dd class='am-accordion-bd am-collapse'>" +
+                                "<div class='am-accordion-content'>" ;
+
+
+
+                        $.each(data.data.friends, function(i, val) {
+                            if(val.groupid === value.groupid){
+                                friend_str = friend_str +
+                                "<a id='"+val.userid+"' href='#' class='chat_user am-text-truncate'><img src='http://amui.qiniudn.com/bw-2014-06-19.jpg?imageView/1/w/96/h/96' alt='' class='am-circle' width='30' height='30'>&nbsp;&nbsp;"+val.name+"</a><br/><br/>";
+                            }
+                        });
+
+                        friend_str = friend_str + "</div></dd>"
+                    });
+
+                    friend_str = friend_str + "</dl></section></div>"
+
+                    $("#chat_user").append(friend_str);
+
+                    $("dt").click(function(){
+                        if($(this).next().hasClass("am-in")){
+                            $(this).next().removeClass("am-in");
+                            $(this).parent().removeClass("am-active");
+                        }
+                        else{
+                            $(this).parent().addClass("am-active");
+                            $(this).next().addClass("am-in");
+                        }
+                    });
+
+                    $(".chat_user").click(function(){
+                        $('#my-prompt').modal({
+                            relatedTarget: this,
+                            onConfirm: function(e) {
+                                $('#my-prompt').modal("");
+                            },
+                            onCancel: function(e) {
+                                $('#my-prompt').modal("close");
+                            }
+                        });
+                    });
+
+                }
+
+            },
+            error:function(data, textStatus, jqXHR){
+                $(".am-modal-bd").text(data);
+            }
+        });
+
+
+
+    }
+
+    getMenu();
+    getRoomInfo();
+    getAllFriends();
 
 
 

@@ -6,7 +6,7 @@ var router = express.Router();
  */
 var login = require("../routes/login")(router);
 var chat = require("../routes/chat")(router);
-var User = require('../models/user');
+var UserDao = require('../models/user');
 var MenuDao =  require('../models/menu');
 var ChatRoomDao =  require('../models/chatRoom');
 
@@ -129,6 +129,30 @@ router.post('/getRoomInfo',function(req,res){
         else{
           console.log("查询不到聊天室::");
           res.json(200, "不存在此聊天室")
+        }
+      }
+    });
+  }
+});
+
+
+router.post('/getAllFriends',function(req,res){
+  var params = req.body;
+  if(params){
+    var username = params.username;
+    UserDao.getAllFriends(function(err,user_friends){
+      if(err){
+        console.error("查询用户朋友错误"+err);
+        res.json(200, { msg: "查询用户朋友错误" })
+      }
+      else{
+        if(user_friends){
+          console.log("查询得到用户朋友::"+user_friends);
+          res.json(200, {"msg":"success",data:user_friends})
+        }
+        else{
+          console.log("查询不到用户朋友::");
+          res.json(200, "不存在此用户朋友")
         }
       }
     });

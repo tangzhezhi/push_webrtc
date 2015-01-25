@@ -63,20 +63,40 @@ Menu.get = function get(menu, callback) {
 
 
 Menu.getAllMenu = function getAll(callback) {
-	mongodb.open(function(err, db) {
-		if (err) {
-			return callback(err);
-		}
-
-		db.collection('menus', function(err, collection) {
+	if(!mongodb.openCalled){
+		mongodb.open(function(err, db) {
 			if (err) {
-				db.close();
+				return callback(err);
+			}
+			db.collection('menus', function(err, collection) {
+				if (err) {
+					db.close();
+					return callback(err);
+				}
+				var query = {};
+
+				collection.find(query).sort({id: 1}).toArray(function(err, docs) {
+					if (err) {
+						callback(err, null);
+					}
+
+					var menus = [];
+					docs.forEach(function(doc, index) {
+						menus = doc.menus;
+					});
+					callback(null, menus);
+				});
+			});
+		});
+	}
+	else{
+		mongodb.collection('menus', function(err, collection){
+			if (err) {
 				return callback(err);
 			}
 			var query = {};
 
 			collection.find(query).sort({id: 1}).toArray(function(err, docs) {
-				db.close();
 				if (err) {
 					callback(err, null);
 				}
@@ -88,7 +108,9 @@ Menu.getAllMenu = function getAll(callback) {
 				callback(null, menus);
 			});
 		});
-	});
+	}
+
+
 };
 
 module.exports = Menu;
