@@ -1,21 +1,20 @@
-var express = require('express');
-var router = express.Router();
 /**
  * 等效于login(router)
  * @type {*|exports}
  */
-var login = require("../routes/login")(router);
-var chat = require("../routes/chat")(router);
 var UserDao = require('../models/user');
 var MenuDao =  require('../models/menu');
 var ChatRoomDao =  require('../models/chatRoom');
-
+var redis = require("redis");
+var express = require('express');
+var router = express.Router();
+var app =  require('../app');
+var io = require('socket.io').listen(app.server);
 /**
  * 获取redis 客户端
  * @returns {*}
  */
 var getRedisClient = function (){
-  var redis = require("redis");
   var client = redis.createClient();
   /**
    * 监听错误
@@ -45,152 +44,166 @@ var getSidFromRedis = function(client,req,callback){
 }
 
 
-/* GET home page. */
-router.get('/', function(req, res) {
+  io.on('connection', function (socket) {
+    socket.on("chat_msg",function(data){
+      console.log("data::::"+data);
+        var fromUserId = data.fromUserId;
+        var toUserId = data.toUserId;
+        var message = data.message;
+      socket.emit("chat_room_"+fromUserId,fromUserId+":"+message);
+      socket.emit("chat_room_"+toUserId,toUserId+":"+message);
+    });
+  });
+  /* GET home page. */
+  router.get('/', function(req, res) {
 
-  if(req){
-    if(req.query.sessionid){
+    if(req){
+      if(req.query.sessionid){
         console.log("sessionid:"+req.query.sessionid);
-      var client = getRedisClient();
+        var client = getRedisClient();
 
-      getSidFromRedis(client,req,function(err,data){
-        if(err){
-          console.err(err);
-        }
-        else{
-          if(data.session.user !=null){
-            res.render('index', {
-              title: '首页',
-              user : data.session.user,
-              success : data.flash('success').toString(),
-              error : data.flash('error').toString()
-            });
+        getSidFromRedis(client,req,function(err,data){
+          if(err){
+            console.err(err);
           }
           else{
-            res.redirect("/login");
+            if(data.session.user !=null){
+              res.render('index', {
+                title: '首页',
+                user : data.session.user,
+                success : data.flash('success').toString(),
+                error : data.flash('error').toString()
+              });
+            }
+            else{
+              res.redirect("/login");
+            }
+          }
+        });
+
+      }
+      else{
+        res.redirect("/login");
+      }
+    }
+  });
+
+
+  router.get('/index',function(req,res){
+    if(req){
+      if(req.session.user){
+        res.render("index",{
+          title:'欢迎来到首页',
+          userid:req.session.user.userid,
+          username:req.session.user.username
+        });
+      }
+    }
+  });
+
+
+  router.post('/getMenu',function(req,res){
+    var params = req.body;
+    if(params){
+      var username = params.username;
+      MenuDao.getAllMenu(function(err,menus){
+        if(err){
+          console.error("查询菜单错误"+err);
+          res.json(200, { msg: "查询菜单错误" })
+        }
+        else{
+          if(menus){
+            console.log("查询得到菜单::"+menus);
+            res.json(200, {"msg":"success",data:menus})
+          }
+          else{
+            console.log("查询不到菜单::");
+            res.json(200, "不存在此菜单")
           }
         }
       });
-
     }
-    else{
-      res.redirect("/login");
-    }
-  }
-});
+  });
 
-
-router.get('/index',function(req,res){
-  if(req){
-    if(req.session.user){
-        res.render("index",{title:'欢迎来到首页'});
-    }
-  }
-});
-
-
-router.post('/getMenu',function(req,res){
-  var params = req.body;
-  if(params){
-    var username = params.username;
-    MenuDao.getAllMenu(function(err,menus){
-      if(err){
-        console.error("查询菜单错误"+err);
-        res.json(200, { msg: "查询菜单错误" })
-      }
-      else{
-        if(menus){
-          console.log("查询得到菜单::"+menus);
-          res.json(200, {"msg":"success",data:menus})
-        }
-        else{
-          console.log("查询不到菜单::");
-          res.json(200, "不存在此菜单")
-        }
-      }
-    });
-  }
-});
-
-router.post('/getRoomInfo',function(req,res){
-  var params = req.body;
-  if(params){
-    var username = params.username;
-    ChatRoomDao.getAllChatRoom(function(err,chat_room){
-      if(err){
-        console.error("查询聊天室错误"+err);
-        res.json(200, { msg: "查询聊天室错误" })
-      }
-      else{
-        if(chat_room){
-          console.log("查询得到聊天室::"+chat_room);
-          res.json(200, {"msg":"success",data:chat_room})
-        }
-        else{
-          console.log("查询不到聊天室::");
-          res.json(200, "不存在此聊天室")
-        }
-      }
-    });
-  }
-});
-
-
-router.post('/getAllFriends',function(req,res){
-  var params = req.body;
-  if(params){
-    var username = params.username;
-    UserDao.getAllFriends(function(err,user_friends){
-      if(err){
-        console.error("查询用户朋友错误"+err);
-        res.json(200, { msg: "查询用户朋友错误" })
-      }
-      else{
-        if(user_friends){
-          console.log("查询得到用户朋友::"+user_friends);
-          res.json(200, {"msg":"success",data:user_friends})
-        }
-        else{
-          console.log("查询不到用户朋友::");
-          res.json(200, "不存在此用户朋友")
-        }
-      }
-    });
-  }
-});
-
-
-
-
-/* GET home page. */
-router.get('/vedio', function(req, res) {
-
-  if(req){
-    if(req.query.sessionid){
-      console.log("sessionid:"+req.query.sessionid);
-      var client = getRedisClient();
-
-      getSidFromRedis(client,req,function(err,data){
+  router.post('/getRoomInfo',function(req,res){
+    var params = req.body;
+    if(params){
+      var username = params.username;
+      ChatRoomDao.getAllChatRoom(function(err,chat_room){
         if(err){
-          console.err(err);
+          console.error("查询聊天室错误"+err);
+          res.json(200, { msg: "查询聊天室错误" })
         }
         else{
-          if(data.session.user !=null){
-            res.render('vedio', {
-              title: '会议室',
-              user : data.session.user,
-              success : data.flash('success').toString(),
-              error : data.flash('error').toString()
-            });
+          if(chat_room){
+            console.log("查询得到聊天室::"+chat_room);
+            res.json(200, {"msg":"success",data:chat_room})
           }
           else{
-            res.redirect("/login");
+            console.log("查询不到聊天室::");
+            res.json(200, "不存在此聊天室")
           }
         }
       });
-
     }
-  }
-});
+  });
+
+
+  router.post('/getAllFriends',function(req,res){
+    var params = req.body;
+    if(params){
+      var username = params.username;
+      UserDao.getAllFriends(function(err,user_friends){
+        if(err){
+          console.error("查询用户朋友错误"+err);
+          res.json(200, { msg: "查询用户朋友错误" })
+        }
+        else{
+          if(user_friends){
+            console.log("查询得到用户朋友::"+user_friends);
+            res.json(200, {"msg":"success",data:user_friends})
+          }
+          else{
+            console.log("查询不到用户朋友::");
+            res.json(200, "不存在此用户朋友")
+          }
+        }
+      });
+    }
+  });
+
+
+  /* GET home page. */
+  router.get('/vedio', function(req, res) {
+
+    if(req){
+      if(req.query.sessionid){
+        console.log("sessionid:"+req.query.sessionid);
+        var client = getRedisClient();
+
+        getSidFromRedis(client,req,function(err,data){
+          if(err){
+            console.err(err);
+          }
+          else{
+            if(data.session.user !=null){
+              res.render('vedio', {
+                title: '会议室',
+                user : data.session.user,
+                success : data.flash('success').toString(),
+                error : data.flash('error').toString()
+              });
+            }
+            else{
+              res.redirect("/login");
+            }
+          }
+        });
+
+      }
+    }
+  });
+
+
 
 module.exports = router;

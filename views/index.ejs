@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Amaze UI Admin index Examples</title>
+    <title><%=title%>></title>
     <meta name="description" content="这是一个 index 页面">
     <meta name="keywords" content="index">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -33,8 +33,9 @@
         <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
             <li><a href="javascript:;"><span class="am-icon-envelope-o"></span> 收件箱 <span class="am-badge am-badge-warning">5</span></a></li>
             <li class="am-dropdown" data-am-dropdown>
+                <div id="userid" class="am-hide"><%=userid%></div>
                 <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
-                    <span class="am-icon-users"></span> 管理员 <span class="am-icon-caret-down"></span>
+                    <span class="am-icon-users"></span> <%=username%> <span class="am-icon-caret-down"></span>
                 </a>
                 <ul class="am-dropdown-content">
                     <li><a href="#"><span class="am-icon-user"></span> 资料</a></li>
@@ -89,26 +90,21 @@
 
 <div class="am-modal  am-panel-default" tabindex="-1" id="my-prompt">
     <div class="am-g ">
-        <div class="am-panel-hd am-text-left am-btn-primary">
-            现在和阿汤聊天中
-            <a href="" class="am-close am-close-alt am-close-spin am-icon-times"></a>
-        </div>
+        <div id="chat_title" class="am-panel-hd am-text-left am-btn-primary"></div>
         <div class="am-panel am-panel-default ">
-            <div class="am-panel-bd" style="height:18rem">
+            <div id="chat_history_content" class="am-panel-bd" style="height:18rem">
             </div>
             <div class="am-panel-default am-panel">
-                <textarea rows="5" class="am-panel am-u-sm-12" placeholder="请使用富文本编辑插件"></textarea>
+                <textarea id="my_chat_msg" rows="5" class="am-panel am-u-sm-12" placeholder="请使用富文本编辑插件"></textarea>
             </div>
 
 
             <div class="am-modal-footer">
-                <button type="button" class="am-btn am-btn-primary am-radius am-align-right am-btn-sm">发送</button>
-                <button type="button" class="am-btn am-btn-default am-radius am-align-right am-btn-sm">关闭</button>
+                <button id="chat_send" type="button" class="am-btn am-btn-primary am-radius am-align-right am-btn-sm">发送</button>
+                <button id="chat_close" type="button" class="am-btn am-btn-default am-radius am-align-right am-btn-sm">关闭</button>
             </div>
         </div>
-
     </div>
-
 </div>
 
 
@@ -133,5 +129,6 @@
 <script src="assets/js/app.js"></script>
 
 <script src="/javascripts/index.js"></script>
+<script src="http://cdn.bootcss.com/socket.io/1.3.2/socket.io.min.js"></script>
 </body>
 </html>

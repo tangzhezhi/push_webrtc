@@ -1,5 +1,13 @@
 
 $(document).ready(function(){
+
+    var socket = io.connect();
+
+    var chat_userid = "";
+    var myuerid = $("#userid").text();
+
+    $("#chat_history_content").val();
+
     /**
      * 获取菜单
      */
@@ -142,15 +150,32 @@ $(document).ready(function(){
                     });
 
                     $(".chat_user").click(function(){
-                        $('#my-prompt').modal({
-                            relatedTarget: this,
-                            onConfirm: function(e) {
-                                $('#my-prompt').modal("");
-                            },
-                            onCancel: function(e) {
-                                $('#my-prompt').modal("close");
-                            }
+                        var data = this.innerText;
+                        chat_userid = this.id;
+                        $("#chat_title").text("现在与"+data+" 聊天中").append("<a href='' class='am-close am-close-alt am-close-spin am-icon-times'></a>");
+                        socket.on("chat_room_"+myuerid,function(data){
+                            $("#chat_history_content").append(data).append("<br/>");
                         });
+                        $('#my-prompt').modal({
+                            relatedTarget: this
+                        });
+                    });
+
+
+                    $("#chat_send").click(function(){
+                        var mymsg = $("#my_chat_msg").val();
+
+                        var message = {
+                            fromUserId:myuerid,
+                            toUserId:chat_userid,
+                            message:mymsg
+                        };
+                        socket.emit("chat_msg",message);
+                        $("#my_chat_msg").val("");
+                    });
+
+                    $("#chat_close").click(function(){
+                        $('#my-prompt').modal('close');
                     });
 
                 }
@@ -160,9 +185,6 @@ $(document).ready(function(){
                 $(".am-modal-bd").text(data);
             }
         });
-
-
-
     }
 
     getMenu();
