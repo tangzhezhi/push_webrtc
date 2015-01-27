@@ -95,7 +95,7 @@ User.getAllUser = function getAllUser(callback) {
 };
 
 
-User.getAllFriends = function getAllFriends(callback) {
+User.getAllFriends = function getAllFriends(params,callback) {
 	if(!mongodb.openCalled){
 		mongodb.open(function(err, db) {
 			if (err) {
@@ -106,18 +106,24 @@ User.getAllFriends = function getAllFriends(callback) {
 				if (err) {
 					return callback(err);
 				}
-				var query = {
-					"friends": 1
-				};
 
-				collection.find({},query).sort({"userid": 1}).toArray(function(err, docs) {
+				var fields = {
+					"friends": 1,
+					"groups":1
+				}
+
+				var query = {
+					userid:parseInt(params.userid)
+				}
+
+				collection.find(query,fields).sort({"userid": 1}).toArray(function(err, docs) {
 					if (err) {
 						callback(err, null);
 					}
 
 					var friend_arr = {};
 					docs.forEach(function(doc, index) {
-						friend_arr = doc.friends;
+						friend_arr = doc;
 					});
 					callback(null, friend_arr);
 				});
@@ -129,12 +135,17 @@ User.getAllFriends = function getAllFriends(callback) {
 			if (err) {
 				return callback(err);
 			}
+
 			var query = {
+				userid: parseInt(params.userid)
+			}
+
+			var fields = {
 				"friends": 1,
 				"groups":1
-			};
+			}
 
-			collection.find({},query).sort({userid: 1}).toArray(function(err, docs) {
+			collection.find(query,fields).sort({userid: 1}).toArray(function(err, docs) {
 				if (err) {
 					callback(err, null);
 				}

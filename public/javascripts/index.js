@@ -116,6 +116,7 @@ $(document).ready(function(){
         $.ajax({
             type:"post",
             url: "getAllFriends",
+            data:{userid:myuerid},
             cache: false,
             success: function(data){
                 if(data.msg === "success"){
@@ -164,12 +165,11 @@ $(document).ready(function(){
 
 
                         socket.on('message', function(data) {
-                            $("#chat_history_content").empty().append(data).append("<br/>");
+                            if(data.fromUserId === chat_userid){
+                                $("#chat_history_content").empty().append(data.message).append("<br/>");
+                            }
                         });
 
-//                        socket.on("message",function(data){
-//                            $("#chat_history_content").empty().append(data).append("<br/>");
-//                        });
                         $('#my-prompt').modal({
                             relatedTarget: this
                         });

@@ -28,7 +28,7 @@ ChatRoom.getAllChatRoom = function getAll(callback) {
 					var ChatRooms = [];
                     if(docs){
                         docs.forEach(function(doc, index) {
-                            ChatRooms = doc.chat_room;
+							ChatRooms.push(doc);
                         });
 
                         callback(null, ChatRooms);
@@ -53,7 +53,7 @@ ChatRoom.getAllChatRoom = function getAll(callback) {
 
 				if(docs){
 					docs.forEach(function(doc, index) {
-                        ChatRooms = doc.chat_room;
+                        ChatRooms.push(doc);
 					});
 
                     callback(null, ChatRooms);

@@ -121,10 +121,10 @@ io.sockets.on('connection', function (socket) {
         console.log("toUserId::::"+ toUserId);
         console.log("message::::"+ message);
 
-        socket.broadcast.emit('message', message);
+        //socket.broadcast.emit('message', message);
 
-//        socket.broadcast.in("chat_room_"+fromUserId).emit('message', message);
-//        socket.broadcast.in("chat_room_"+toUserId).emit('message', message);
+        socket.broadcast.in("chat_room_"+fromUserId).emit('message', data);
+        socket.broadcast.in("chat_room_"+toUserId).emit('message', data);
     });
 
     //断开连接callback

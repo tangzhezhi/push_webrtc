@@ -10,7 +10,6 @@ var express = require('express');
 var router = express.Router();
 var app =  require('../app');
 var login = require('../routes/login')(router);
-//var io = require('socket.io').listen(app.server);
 
 /**
  * 获取redis 客户端
@@ -46,21 +45,6 @@ var getSidFromRedis = function(client,req,callback){
 }
 
 
-//  io.sockets.on('connection', function (socket) {
-//    socket.on("chat_msg",function(data){
-//      console.log("data::::"+data);
-//        var fromUserId = data.fromUserId;
-//        var toUserId = data.toUserId;
-//        var message = data.message;
-//      socket.emit("chat_room_"+fromUserId,fromUserId+":"+message);
-//      socket.emit("chat_room_"+toUserId,toUserId+":"+message);
-//    });
-//
-//      //断开连接callback
-//      io.on('disconnect', function () {
-//          console.log('Server has disconnected');
-//      });
-//  });
   /* GET home page. */
   router.get('/', function(req, res) {
 
@@ -160,7 +144,7 @@ var getSidFromRedis = function(client,req,callback){
     var params = req.body;
     if(params){
       var username = params.username;
-      UserDao.getAllFriends(function(err,user_friends){
+      UserDao.getAllFriends(params,function(err,user_friends){
         if(err){
           console.error("查询用户朋友错误"+err);
           res.json(200, { msg: "查询用户朋友错误" })
