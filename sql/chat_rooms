@@ -1,0 +1,2 @@
+{ "_id" : { "$oid" : "54c45ae4de2bc9f6e78e40a2" }, "id" : "1", "name" : "聊天室一", "current_num" : 2, "subject" : "讨论天气", "member" : [ { "userid" : "1", "name" : "阿汤" }, { "userid" : "2", "name" : "柳柳" } ] }
+{ "_id" : { "$oid" : "54c45b25de2bc9f6e78e40a3" }, "id" : "2", "name" : "聊天室2", "current_num" : 2, "subject" : "讨论天气", "member" : [ { "userid" : "1", "name" : "阿汤" }, { "userid" : "2", "name" : "柳柳" } ] }
