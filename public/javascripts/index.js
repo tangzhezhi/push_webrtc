@@ -3,8 +3,16 @@ $(document).ready(function(){
 
     var socket = io.connect();
 
+
     var chat_userid = "";
     var myuerid = $("#userid").text();
+
+    socket.on('connect', function () {
+        socket.on('ready', function () {
+            console.log('Connected !');
+        });
+    });
+    socket.emit('subscribe',{"room" : "chat_room_"+myuerid});
 
     $("#chat_history_content").val();
 
@@ -150,12 +158,18 @@ $(document).ready(function(){
                     });
 
                     $(".chat_user").click(function(){
-                        var data = this.innerText;
+                        var data = this.text;
                         chat_userid = this.id;
                         $("#chat_title").text("现在与"+data+" 聊天中").append("<a href='' class='am-close am-close-alt am-close-spin am-icon-times'></a>");
-                        socket.on("chat_room_"+myuerid,function(data){
-                            $("#chat_history_content").append(data).append("<br/>");
+
+
+                        socket.on('message', function(data) {
+                            $("#chat_history_content").empty().append(data).append("<br/>");
                         });
+
+//                        socket.on("message",function(data){
+//                            $("#chat_history_content").empty().append(data).append("<br/>");
+//                        });
                         $('#my-prompt').modal({
                             relatedTarget: this
                         });

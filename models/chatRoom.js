@@ -26,10 +26,13 @@ ChatRoom.getAllChatRoom = function getAll(callback) {
 					}
 
 					var ChatRooms = [];
-					docs.forEach(function(doc, index) {
-						ChatRooms.push(doc);
-					});
-					callback(null, ChatRooms);
+                    if(docs){
+                        docs.forEach(function(doc, index) {
+                            ChatRooms = doc.chat_room;
+                        });
+
+                        callback(null, ChatRooms);
+                    }
 				});
 			});
 		});
@@ -50,10 +53,12 @@ ChatRoom.getAllChatRoom = function getAll(callback) {
 
 				if(docs){
 					docs.forEach(function(doc, index) {
-						ChatRooms.push(doc);
+                        ChatRooms = doc.chat_room;
 					});
+
+                    callback(null, ChatRooms);
 				}
-				callback(null, ChatRooms);
+
 			});
 		});
 	}

@@ -1,4 +1,5 @@
 var express = require('express');
+var router = express.Router();
 var html = require('html');
 var path = require('path');
 var favicon = require('static-favicon');
@@ -11,11 +12,10 @@ var session    = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var settings = require('./settings'); 
 var flash = require('connect-flash');
-
-var routes = require('./routes/index');
-
 var app = express();
 var server = require('http').createServer(app);
+var routes = require('./routes/index');
+//var login = require('./routes/login')(router);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -29,22 +29,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 
-//设置跨域访问
-//app.all('*', function(req, res, next) {
-//    res.header("Access-Control-Allow-Origin", "*");
-//    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//    res.header("Access-Control-Allow-Methods","POST,GET");
-//    res.header("X-Powered-By",' 3.2.1')
-//    next();
-//});
-
-
-//app.use(session({
-//    secret: settings.cookieSecret,
-//    store: new MongoStore({
-//        db: settings.db
-//    })
-//}));
 
 app.use(session({
     secret: settings.cookieSecret,
@@ -82,68 +66,6 @@ server.listen(app.get('port'), function(){
 
 console.log("something happening");
 
-
-//io.on('connection', function (socket) {
-//    socket.emit('open');//通知客户端已连接
-//    // 打印握手信息
-//    // console.log(socket.handshake);
-//
-//    // 构造客户端对象
-//    var client = {
-//        socket:socket,
-//        name:false,
-//        color:getColor()
-//    }
-//
-//    // 对message事件的监听
-//    socket.on('message', function(msg){
-//        var obj = {time:getTime(),color:client.color};
-//
-//        // 判断是不是第一次连接，以第一条消息作为用户名
-//        if(!client.name){
-//            client.name = msg;
-//            obj['text']=client.name;
-//            obj['author']='System';
-//            obj['type']='welcome';
-//            console.log(client.name + ' login');
-//
-//            //返回欢迎语
-//            socket.emit('system',obj);
-//            //广播新用户已登陆
-//            socket.broadcast.emit('system',obj);
-//        }else{
-//
-//            //如果不是第一次的连接，正常的聊天消息
-//            obj['text']=msg;
-//            obj['author']=client.name;
-//            obj['type']='message';
-//            console.log(client.name + ' say: ' + msg);
-//
-//            // 返回消息（可以省略）
-//            socket.emit('message',obj);
-//            // 广播向其他用户发消息
-//            socket.broadcast.emit('message',obj);
-//        }
-//    });
-//
-//    //监听出退事件
-//    socket.on('disconnect', function () {
-//        var obj = {
-//            time:getTime(),
-//            color:client.color,
-//            author:'System',
-//            text:client.name,
-//            type:'disconnect'
-//        };
-//
-//        // 广播用户已退出
-//        socket.broadcast.emit('system',obj);
-//        console.log(client.name + 'Disconnect');
-//    });
-//
-//});
-
-
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -172,6 +94,42 @@ app.use(function(err, req, res, next) {
     res.render('error', {
         message: err.message,
         error: {}
+    });
+});
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function (socket) {
+
+    socket.on('subscribe', function(data) {
+        console.log("subscribe::"+data.room);
+        socket.join(data.room);
+    })
+
+    socket.on('unsubscribe', function(data) {
+        socket.leave(data.room);
+    })
+
+    socket.on("chat_msg",function(data){
+        console.log("data::::"+data);
+        console.log("fromUserId::::"+ data.fromUserId);
+        var fromUserId = data.fromUserId;
+        var toUserId = data.toUserId;
+        var message = data.message;
+
+        console.log("fromUserId::::"+ fromUserId);
+        console.log("toUserId::::"+ toUserId);
+        console.log("message::::"+ message);
+
+        socket.broadcast.emit('message', message);
+
+//        socket.broadcast.in("chat_room_"+fromUserId).emit('message', message);
+//        socket.broadcast.in("chat_room_"+toUserId).emit('message', message);
+    });
+
+    //断开连接callback
+    io.on('disconnect', function () {
+        console.log('Server has disconnected');
     });
 });
 

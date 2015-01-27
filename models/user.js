@@ -77,7 +77,7 @@ User.getAllUser = function getAllUser(callback) {
 			}
 			var query = {};
 
-			collection.find(query).sort({userid: 1}).toArray(function(err, docs) {
+			collection.find(query).sort({"userid": 1}).toArray(function(err, docs) {
 				db.close();
 				if (err) {
 					db.close();
@@ -110,7 +110,7 @@ User.getAllFriends = function getAllFriends(callback) {
 					"friends": 1
 				};
 
-				collection.find({userid:1},query).sort({userid: 1}).toArray(function(err, docs) {
+				collection.find({},query).sort({"userid": 1}).toArray(function(err, docs) {
 					if (err) {
 						callback(err, null);
 					}
@@ -134,7 +134,7 @@ User.getAllFriends = function getAllFriends(callback) {
 				"groups":1
 			};
 
-			collection.find({userid:1},query).sort({userid: 1}).toArray(function(err, docs) {
+			collection.find({},query).sort({userid: 1}).toArray(function(err, docs) {
 				if (err) {
 					callback(err, null);
 				}
