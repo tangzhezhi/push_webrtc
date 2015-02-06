@@ -45,15 +45,15 @@ ChatRecords.getUserAllChatRecord = function getUserAllChatRecord(callback) {
 };
 
 
-ChatRecords.save = function save(callback){
+ChatRecords.save = function save(params,callback){
 
     var chat_record = {
-        userid:parseInt(this.userid),
-        record_date:this.recordDate,
-        msg:this.msg,
-        from_userid:parseInt(this.fromUserid),
-        to_userid:parseInt(this.toUserId),
-        record_time:this.record_time
+        userid:parseInt(params.userid),
+        record_date:params.recordDate,
+        msg:params.msg,
+        from_userid:parseInt(params.fromUserid),
+        to_userid:parseInt(params.toUserId),
+        record_time:params.record_time
     }
 
 

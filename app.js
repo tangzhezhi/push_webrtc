@@ -139,7 +139,7 @@ io.sockets.on('connection', function (socket) {
 
         }
 
-        ChatRecordsDao(ChatRecordsParams1).save(function(err,result){
+         ChatRecordsDao.save(ChatRecordsParams1,function(err,result){
             console.log(result);
         });
 
