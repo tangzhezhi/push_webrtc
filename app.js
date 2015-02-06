@@ -15,6 +15,9 @@ var flash = require('connect-flash');
 var app = express();
 var server = require('http').createServer(app);
 var routes = require('./routes/index');
+
+var ChatRecordsDao =  require('./models/chatRecords');
+var DateUtil =  require('./libs/date_util');
 //var login = require('./routes/login')(router);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -125,6 +128,22 @@ io.sockets.on('connection', function (socket) {
 
         socket.broadcast.in("chat_room_"+fromUserId).emit('message', data);
         socket.broadcast.in("chat_room_"+toUserId).emit('message', data);
+
+        var ChatRecordsParams1 = {
+           "userid": fromUserId,
+            "fromUserid":fromUserId,
+            "toUserId":toUserId,
+            "msg":message,
+            "recordDate":DateUtil.toYMDDateString(new Date()),
+            "recordTime":DateUtil.toHmsTimeString(new Date())
+
+        }
+
+        ChatRecordsDao(ChatRecordsParams1).save(function(err,result){
+            console.log(result);
+        });
+
+
     });
 
     //断开连接callback
