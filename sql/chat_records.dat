@@ -1,3 +1,26 @@
-{ "_id" : { "$oid" : "54d1b6078e845ac8e2a6545c" }, "userid" : 1, "record_date" : "20150101", "msg_list" : [ { "record_time" : "120001", "msg" : "汤汤你好", "from_userid" : 2, "to_userid" : 1 }, { "record_time" : "120005", "msg" : "柳柳你好", "from_userid" : 1, "to_userid" : 2 }, { "record_time" : "120015", "msg" : "柳柳", "from_userid" : 1, "to_userid" : 2 } ] }
-{ "_id" : { "$oid" : "54d32eb98e845ac8e2a65464" }, "userid" : 2, "record_date" : "20150101", "msg_list" : [ { "record_time" : "120001", "msg" : "汤汤你好", "from_userid" : 2, "to_userid" : 1 }, { "record_time" : "120005", "msg" : "柳柳你好", "from_userid" : 1, "to_userid" : 2 }, { "record_time" : "120015", "msg" : "柳柳", "from_userid" : 1, "to_userid" : 2 } ] }
-{ "_id" : { "$oid" : "54d458528e845ac8e2a65465" }, "userid" : 1, "record_date" : "20150102", "msg_list" : [ { "record_time" : "110001", "msg" : "汤汤11", "from_userid" : 2, "to_userid" : 1 }, { "record_time" : "110005", "msg" : "柳柳11", "from_userid" : 1, "to_userid" : 2 }, { "record_time" : "110015", "msg" : "柳柳123", "from_userid" : 1, "to_userid" : 2 }, { "record_time" : "121111", "msg" : "新增消息", "from_userid" : 1, "to_userid" : 2 } ] }
+{
+    "_id" : ObjectId("54d1b6078e845ac8e2a6545c"),
+    "userid" : 1,
+    "chat_userid" : 2,
+    "record_date" : "20150101",
+    "msg_list" : [
+        {
+            "record_time" : "120001",
+            "msg" : "汤汤你好",
+            "from_userid" : 2,
+            "to_userid" : 1
+        },
+        {
+            "record_time" : "120005",
+            "msg" : "柳柳你好",
+            "from_userid" : 1,
+            "to_userid" : 2
+        },
+        {
+            "record_time" : "120015",
+            "msg" : "柳柳",
+            "from_userid" : 1,
+            "to_userid" : 2
+        }
+    ]
+}
