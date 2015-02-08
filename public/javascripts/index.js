@@ -1,5 +1,15 @@
 
 $(document).ready(function(){
+    function state1(){
+        $(".rotate").removeClass("r2");
+        $(".rotate").addClass("r1");
+        setTimeout(state2,90);
+    }
+    function state2(){
+        $(".rotate").removeClass("r1");
+        $(".rotate").addClass("r2");
+        setTimeout(state1,90);
+    }
 
     var socket = io.connect();
 
@@ -14,7 +24,31 @@ $(document).ready(function(){
     });
     socket.emit('subscribe',{"room" : "chat_room_"+myuerid});
 
-    $("#chat_history_content").val();
+    socket.on('message', function(data) {
+        if(data.fromUserId != chat_userid){
+
+            var arrImg = $("a.chat_user");
+            $.each(arrImg,function(i,item){
+                if(this.id === data.fromUserId ){
+                    $(this).children("img").addClass("rotate");
+                    state1();
+                }
+            });
+        }
+        else{
+            var arrImg = $("a.chat_user");
+            $.each(arrImg,function(i,item){
+                if(this.id === data.fromUserId ){
+                    clearTimeout(state1);
+                    clearTimeout(state2)
+                    $(this).children("img").removeClass("rotate");
+                }
+            });
+            var content = $("#chat_history_content").html();
+            content = content + "<p class='am-cf am-fr'>"+data.message+"</p><br>";
+            $("#chat_history_content").html(content);
+        }
+    });
 
     /**
      * 获取菜单
@@ -159,16 +193,13 @@ $(document).ready(function(){
                     });
 
                     $(".chat_user").click(function(){
+                        clearTimeout(state1);
+                        clearTimeout(state2)
+                        $(this).children("img").removeClass("rotate");
+
                         var data = this.text;
                         chat_userid = this.id;
                         $("#chat_title").text("现在与"+data+" 聊天中").append("<a href='' class='am-close am-close-alt am-close-spin am-icon-times'></a>");
-
-
-                        socket.on('message', function(data) {
-                            if(data.fromUserId === chat_userid){
-                                $("#chat_history_content").empty().append(data.message).append("<br/>");
-                            }
-                        });
 
                         $('#my-prompt').modal({
                             relatedTarget: this
@@ -185,10 +216,17 @@ $(document).ready(function(){
                             message:mymsg
                         };
                         socket.emit("chat_msg",message);
+
+                        var content = $("#chat_history_content").html();
+
+                        content = content + "<p class='am-cf am-fl'>"+mymsg+"</p><br>";
+                        $("#chat_history_content").html(content);
+
                         $("#my_chat_msg").val("");
                     });
 
                     $("#chat_close").click(function(){
+                        chat_userid = null;
                         $('#my-prompt').modal('close');
                     });
 

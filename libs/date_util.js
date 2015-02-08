@@ -6,16 +6,17 @@ date_util.toDateTimeString = function (timeStamp) {
     return toMoment(timeStamp).format('YYYY-MM-DD HH:mm:ss');
 };
 
-date_util.toYMDDateString = function (timeStamp) {
-    return toMoment(timeStamp).format('YYYYMMDD');
+date_util.NowYMDDateString = function () {
+    return moment().format('YYYYMMDD');
 };
+
 
 date_util.toDateString = function (timeStamp) {
     return toMoment(timeStamp).format('YYYY-MM-DD');
 };
 
-date_util.toHmsTimeString = function (timeStamp) {
-    return toMoment(timeStamp).format('HHmmss');
+date_util.NowHmsTimeString = function () {
+    return moment().format('YYYYMMDDHHmmss').substr(8,14);
 };
 
 date_util.toTimeString = function (timeStamp) {

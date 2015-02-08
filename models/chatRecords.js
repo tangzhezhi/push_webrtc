@@ -53,7 +53,7 @@ ChatRecords.save = function save(params,callback){
         msg:params.msg,
         from_userid:parseInt(params.fromUserid),
         to_userid:parseInt(params.toUserId),
-        record_time:params.record_time
+        record_time:params.recordTime
     }
 
 
@@ -64,12 +64,13 @@ ChatRecords.save = function save(params,callback){
 
         var query = {
             userid: parseInt(chat_record.userid),
+            chat_userid:parseInt(chat_record.to_userid),
             record_date:chat_record.record_date
         };
 
-        collection.findOne(query).toArray(function(err, docs) {
+        collection.findOne(query,function(err, docs) {
             if(docs){
-                collection.update({record_date:chat_record.record_date},
+                collection.update({chat_userid:parseInt(chat_record.to_userid),record_date:chat_record.record_date},
                     {"$push":
                         {"msg_list":
                             {record_time:chat_record.record_time,msg:chat_record.msg,from_userid:chat_record.from_userid,to_userid:chat_record.to_userid}
@@ -83,13 +84,14 @@ ChatRecords.save = function save(params,callback){
                 var insert_chart =
                 {
                     "userid" :  parseInt(chat_record.userid),
+                    "chat_userid":parseInt(chat_record.to_userid),
                     "record_date" : chat_record.record_date,
                     "msg_list" : [
                     {
                         "record_time" : chat_record.record_time,
                         "msg" : chat_record.msg,
-                        "from_userid" : chat_record.from_userid,
-                        "to_userid" : chat_record.to_userid
+                        "from_userid" : parseInt(chat_record.from_userid),
+                        "to_userid" : parseInt(chat_record.to_userid)
                     }
                 ]
                };

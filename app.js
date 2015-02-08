@@ -134,8 +134,8 @@ io.sockets.on('connection', function (socket) {
             "fromUserid":fromUserId,
             "toUserId":toUserId,
             "msg":message,
-            "recordDate":DateUtil.toYMDDateString(new Date()),
-            "recordTime":DateUtil.toHmsTimeString(new Date())
+            "recordDate":DateUtil.NowYMDDateString(),
+            "recordTime":DateUtil.NowHmsTimeString()
 
         }
 
