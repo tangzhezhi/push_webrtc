@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><%=title%>></title>
-    <meta name="description" content="这是一个 index 页面">
+    <title><%=title%></title>
+    <meta name="description" content="阿汤的即时通讯">
     <meta name="keywords" content="index">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp" />
     <link rel="icon" type="image/png" href="assets/i/favicon.png">
     <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
-    <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+    <meta name="apple-mobile-web-app-title" content="阿汤的即时通讯" />
     <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
     <link rel="stylesheet" href="assets/css/admin.css">
     <style>
@@ -109,17 +109,15 @@
 
 
 <div class="am-modal  am-panel-default" tabindex="-1" id="my-prompt">
-    <div class="am-g ">
-        <div id="chat_title" class="am-panel-hd am-text-left am-btn-primary"></div>
+    <div class="am-g am-u-sm-12 am-u-md-12">
+        <div id="chat_title" class="am-panel-hd am-text-left am-btn-primary am-panel-title"></div>
         <div class="am-panel am-panel-default ">
-            <div id="chat_history_content" class="am-panel-bd" style="height:18rem">
+            <div id="chat_history_content" class="am-panel-bd " style="height:20rem; overflow-x: hidden; overflow-y: auto;  ">
             </div>
             <div class="am-panel-default am-panel">
-                <textarea id="my_chat_msg" rows="5" class="am-panel am-u-sm-12" placeholder="请使用富文本编辑插件"></textarea>
+                <textarea id="my_chat_msg" rows="5" class="am-panel am-u-sm-12" placeholder="请输入内容"></textarea>
             </div>
-
-
-            <div class="am-modal-footer">
+            <div class="am-modal-footer am-panel-footer">
                 <button id="chat_send" type="button" class="am-btn am-btn-primary am-radius am-align-right am-btn-sm">发送</button>
                 <button id="chat_close" type="button" class="am-btn am-btn-default am-radius am-align-right am-btn-sm">关闭</button>
             </div>

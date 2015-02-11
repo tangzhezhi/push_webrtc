@@ -45,10 +45,45 @@ $(document).ready(function(){
                 }
             });
             var content = $("#chat_history_content").html();
-            content = content + "<p class='am-cf am-fr'>"+data.message+"</p><br>";
-            $("#chat_history_content").html(content);
+            content = content + "<div class='am-cf am-fr'>"+data.message+"</div><br><br>";
+            $("#chat_history_content").html(content).scrollTop( $('#chat_history_content').scrollHeight );
         }
     });
+
+
+    /**
+     * 打开聊天窗口时，获取当天最后20条聊天记录
+     */
+    function getTop20ChatRecords(self_userid,other_userid,fn){
+        $.ajax({
+           type:"post",
+            url:"getTop20ChatRecords",
+            data:{self_userid:self_userid,other_userid:other_userid},
+            cache:false,
+            success:function(data){
+                console.log(data);
+                fn(data);
+            }
+        });
+    }
+
+    function showRecent20ChatRecord(data,id){
+        //content = content + "<div class='am-cf am-fl'>"+mymsg+"</div><br><br>";
+        //$("#chat_history_content").html(content).scrollTop( $('#chat_history_content').scrollHeight );
+        var content = "";
+        if(data.data!=null && data.data.msg_list.length>0){
+            var msgarr = data.data.msg_list;
+            $.each(msgarr,function(i,item){
+                if(item.from_userid === parseInt(myuerid) ){
+                    content = content + "<div class='am-cf am-fl'>"+item.msg+"</div><br><br>";
+                }
+                else{
+                    content = content + "<div class='am-cf am-fr'>"+item.msg+"</div><br><br>";
+                }
+            });
+        }
+        $("#"+id).empty().html(content).scrollTop( $("#"+id).scrollHeight );
+    }
 
     /**
      * 获取菜单
@@ -85,7 +120,6 @@ $(document).ready(function(){
                     });
 
                     $(".am-list.admin-sidebar-list").append(menus);
-
 
                 }
                 else{
@@ -196,9 +230,14 @@ $(document).ready(function(){
                         clearTimeout(state1);
                         clearTimeout(state2)
                         $(this).children("img").removeClass("rotate");
-
+                        $("#chat_history_content").html("");
                         var data = this.text;
                         chat_userid = this.id;
+
+                        getTop20ChatRecords(myuerid,chat_userid,function(data){
+                            showRecent20ChatRecord(data,"chat_history_content");
+                        });
+
                         $("#chat_title").text("现在与"+data+" 聊天中").append("<a href='' class='am-close am-close-alt am-close-spin am-icon-times'></a>");
 
                         $('#my-prompt').modal({
@@ -219,8 +258,8 @@ $(document).ready(function(){
 
                         var content = $("#chat_history_content").html();
 
-                        content = content + "<p class='am-cf am-fl'>"+mymsg+"</p><br>";
-                        $("#chat_history_content").html(content);
+                        content = content + "<div class='am-cf am-fl'>"+mymsg+"</div><br><br>";
+                        $("#chat_history_content").html(content).scrollTop( $('#chat_history_content').scrollHeight );
 
                         $("#my_chat_msg").val("");
                     });

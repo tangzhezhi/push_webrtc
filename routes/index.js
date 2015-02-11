@@ -5,6 +5,7 @@
 var UserDao = require('../models/user');
 var MenuDao =  require('../models/menu');
 var ChatRoomDao =  require('../models/chatRoom');
+var ChatRecordsDao =  require('../models/chatRecords');
 var redis = require("redis");
 var express = require('express');
 var router = express.Router();
@@ -194,6 +195,29 @@ var getSidFromRedis = function(client,req,callback){
       }
     }
   });
+
+
+router.post('/getTop20ChatRecords',function(req,res){
+  var params = req.body;
+  if(params){
+    ChatRecordsDao.getTop20ChatRecords(params,function(err,chat_records){
+      if(err){
+        console.error("查询最近聊天记录错误"+err);
+        res.json(200, { msg: "查询最近聊天记录" })
+      }
+      else{
+        if(chat_records){
+          console.log("查询得到最近聊天记录::"+chat_records);
+          res.json(200, {"msg":"success",data:chat_records})
+        }
+        else{
+          console.log("查询不到最近聊天记录::");
+          res.json(200, "不存在最近聊天记录")
+        }
+      }
+    });
+  }
+});
 
 
 

@@ -1,4 +1,5 @@
 var mongodb = require('./db');
+var DateUtil =  require('../libs/date_util');
 
 function ChatRecords(chat_records) {
 	this.id = chat_records.id;
@@ -11,35 +12,35 @@ function ChatRecords(chat_records) {
 };
 
 
-ChatRecords.getUserAllChatRecord = function getUserAllChatRecord(callback) {
+ChatRecords.getTop20ChatRecords = function getTop20ChatRecords(params,callback) {
 		mongodb.collection('chat_records', function(err, collection) {
 			if (err) {
 				return callback(err);
 			}
 
             var query = {
-                userid: parseInt(params.userid)
+                userid: parseInt(params.self_userid),
+                chat_userid:parseInt(params.other_userid),
+                record_date:DateUtil.NowYMDDateString()
             };
 
             var projection = {
-                "msg_list":{"$slice":-10}
+                "msg_list":{"$slice":-20}
             };
 
 //            db.chat_records.find({userid:1},{msg_list:{$slice:-2}}).sort({record_date:-1})
 
-			collection.find(query,projection).sort({record_date:-1}).limit(1).toArray(function(err, docs) {
+			collection.findOne(query,projection,function(err, docs) {
 				if (err) {
 					callback(err, null);
 				}
-
 				var Chat_Records = {};
-
 				if(docs){
-					docs.forEach(function(doc, index) {
-                        Chat_Records = doc;
-					});
-                    callback(null, Chat_Records);
+                    callback(null, docs);
 				}
+                else{
+                    callback(err, null);
+                }
 			});
 		});
 };
@@ -65,6 +66,12 @@ ChatRecords.save = function save(params,callback){
         var query = {
             userid: parseInt(chat_record.userid),
             chat_userid:parseInt(chat_record.to_userid),
+            record_date:chat_record.record_date
+        };
+
+        var query2 = {
+            userid: parseInt(chat_record.to_userid),
+            chat_userid:parseInt(chat_record.userid),
             record_date:chat_record.record_date
         };
 
@@ -95,12 +102,49 @@ ChatRecords.save = function save(params,callback){
                     }
                 ]
                };
-
-                collection.insert(insert_chart, {safe: true}, function (err, user) {
+                collection.insert(insert_chart, {safe: true}, function (err, insert_chart) {
                     callback(err, insert_chart);//成功！返回插入的信息
                 });
             }
         });
+
+
+        collection.findOne(query2,function(err, docs) {
+            if(docs){
+                collection.update({chat_userid:parseInt(chat_record.userid),record_date:chat_record.record_date},
+                    {"$push":
+                    {"msg_list":
+                    {record_time:chat_record.record_time,msg:chat_record.msg,from_userid:chat_record.from_userid,to_userid:chat_record.to_userid}
+                    }
+                    },function(err){
+                        callback(err, chat_record);//成功！返回更新的信息
+                    }
+                );
+            }
+            else{
+                var insert_chart =
+                {
+                    "userid" :  parseInt(chat_record.to_userid),
+                    "chat_userid":parseInt(chat_record.userid),
+                    "record_date" : chat_record.record_date,
+                    "msg_list" : [
+                        {
+                            "record_time" : chat_record.record_time,
+                            "msg" : chat_record.msg,
+                            "from_userid" : parseInt(chat_record.from_userid),
+                            "to_userid" : parseInt(chat_record.to_userid)
+                        }
+                    ]
+                };
+                collection.insert(insert_chart, {safe: true}, function (err, insert_chart) {
+                    callback(err, insert_chart);//成功！返回插入的信息
+                });
+            }
+        });
+
+
+
+
     });
 };
 
