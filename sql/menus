@@ -1,0 +1,31 @@
+{
+  "_id" : ObjectId("54bdcf2c8e845ac8e2a65454"),
+  "menus" : [
+    {
+      "id" : "1",
+      "name" : "首页",
+      "pid" : "0",
+      "url" : "index"
+    },
+    {
+      "id" : "2",
+      "name" : "即时通讯",
+      "pid" : "0",
+      "url" : "",
+      "children" : [
+        {
+          "id" : "3",
+          "name" : "视频会议",
+          "url" : "video",
+          "pid" : "2"
+        },
+        {
+          "id" : "4",
+          "name" : "讨论组",
+          "url" : "chat",
+          "pid" : "2"
+        }
+      ]
+    }
+  ]
+}
