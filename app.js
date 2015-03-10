@@ -15,10 +15,8 @@ var flash = require('connect-flash');
 var app = express();
 var server = require('http').createServer(app);
 var routes = require('./routes/index');
-
 var ChatRecordsDao =  require('./models/chatRecords');
 var DateUtil =  require('./libs/date_util');
-//var login = require('./routes/login')(router);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
