@@ -1,16 +1,17 @@
 var express = require('express');
 var router = express.Router();
 var html = require('html');
+var ejs = require('ejs');
 var path = require('path');
+var easyrtc = require("easyrtc");           // EasyRTC external module
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var partials = require('express-partials');
 var session    = require('express-session');
-//var MongoStore = require('connect-mongo')(session);
-var RedisStore = require('connect-redis')(session);
-var settings = require('./settings'); 
+var MongoStore = require('connect-mongo')(session);
+var settings = require('./settings');
 var flash = require('connect-flash');
 var app = express();
 var server = require('http').createServer(app);
@@ -20,8 +21,8 @@ var ChatRecordsDao =  require('./models/chatRecords');
 var DateUtil =  require('./libs/date_util');
 //var login = require('./routes/login')(router);
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.engine('html',ejs.__express);
+app.set('view engine', 'html');
 app.use(partials());
 
 app.use(favicon());
@@ -36,33 +37,17 @@ app.use(flash());
 app.use(session({
     secret: settings.cookieSecret,
     cookie: { maxAge: 2628000000 },
-    store: new RedisStore({
-        host: 'localhost', // optional
-        port: 6379// optional
+    store: new MongoStore({
+        db:settings.db,
+        collection:'session'
     }),
     key: 'jsessionid'
 }));
 
 
-
-
-
-app.use(function(req, res, next){
-  console.log("app.usr local");
-  res.locals.user = req.session.user;
-  res.locals.post = req.session.post;
-  var error = req.flash('error');
-  res.locals.error = error.length ? error : null;
- 
-  var success = req.flash('success');
-  res.locals.success = success.length ? success : null;
-  next();
-});
-
-
 app.use('/', routes);
 //app.listen(3000);
-app.set('port',3000);
+app.set('port',8080);
 server.listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port'));
 });
@@ -70,35 +55,35 @@ server.listen(app.get('port'), function(){
 console.log("something happening");
 
 /// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-});
+//app.use(function(req, res, next) {
+//    var err = new Error('Not Found');
+//    err.status = 404;
+//    next(err);
+//});
 
 /// error handlers
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
+//if (app.get('env') === 'development') {
+//    app.use(function(err, req, res, next) {
+//        res.status(err.status || 500);
+//        res.render('error', {
+//            message: err.message,
+//            error: err
+//        });
+//    });
+//}
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
+//app.use(function(err, req, res, next) {
+//    res.status(err.status || 500);
+//    res.render('error', {
+//        message: err.message,
+//        error: {}
+//    });
+//});
 
 var io = require('socket.io').listen(server);
 
@@ -151,6 +136,51 @@ io.sockets.on('connection', function (socket) {
         console.log('Server has disconnected');
     });
 });
+
+var rtc = easyrtc.listen(app, io);
+
+
+//
+//var WebSocketServer = require('ws').Server,
+//    wss = new WebSocketServer({server: server});
+//
+//// 存储socket的数组，这里只能有2个socket，每次测试需要重启，否则会出错
+//var wsc = [],
+//    index = 1;
+//
+//// 有socket连入
+//wss.on('connection', function(ws) {
+//    console.log('connection');
+//
+//    // 将socket存入数组
+//    wsc.push(ws);
+//
+//    // 记下对方socket在数组中的下标，因为这个测试程序只允许2个socket
+//    // 所以第一个连入的socket存入0，第二个连入的就是存入1
+//    // otherIndex就反着来，第一个socket的otherIndex下标为1，第二个socket的otherIndex下标为0
+//    var otherIndex = index--,
+//        desc = null;
+//
+//    if (otherIndex == 1) {
+//        desc = 'first socket';
+//    } else {
+//        desc = 'second socket';
+//    }
+//
+//    // 转发收到的消息
+//    ws.on('message', function(message) {
+//        var json = JSON.parse(message);
+//        console.log('received (' + desc + '): ', json);
+//
+//        wsc[otherIndex].send(message, function (error) {
+//            if (error) {
+//                console.log('Send message error (' + desc + '): ', error);
+//            }
+//        });
+//    });
+//});
+
+
 
 
 var getTime=function(){

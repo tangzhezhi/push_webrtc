@@ -11,6 +11,7 @@ var express = require('express');
 var router = express.Router();
 var app =  require('../app');
 var login = require('../routes/login')(router);
+var chat_room = require('../routes/chat')(router);
 
 /**
  * 获取redis 客户端

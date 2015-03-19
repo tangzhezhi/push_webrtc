@@ -22,7 +22,11 @@ var login = function(router){
                 else{
                     if(user){
                         console.log("查询得到user::"+user);
-                        req.session.user = user;
+                        try {
+                            req.session.user = user;
+                        } catch (e) {
+                            console.log("异常:"+e);
+                        }
                         res.json(200, "success")
                     }
                     else{
